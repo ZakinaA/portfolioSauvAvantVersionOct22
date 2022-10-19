@@ -1,0 +1,8 @@
+/* your styles go here */
+nav.side-navbar span.heading {
+  text-transform: uppercase;
+  font-weight: 400;
+  margin-left: 20px;
+  color: #696969;
+  font-size: 0.8em;
+}

@@ -1,0 +1,61 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block contenu%}
+</br>
+    <div class="col-lg-10">
+        <div class="card">
+       
+            <div class="card-header d-flex align-items-center">
+                <h3 class="h4"><h3 class="h4"> Liste des étudiants par promo  </h3>
+            </div>
+    <div class="card-body">
+            {% for p in promos %} 
+                 <div class="card-header d-flex align-items-center">
+                      <a class="btn btn-primary" data-toggle="collapse" href="#collapse{{p.id}}" role="button" aria-expanded="false" aria-controls="#collapse{{p.id}}">{{p.annee}}</a>         
+                </div>
+                    <div class="collapse" id="collapse{{p.id}}">         
+                        {% if p.etudiants[0].niveau.id == 1 %}                         
+                           <a class="btn btn-primary" href="{{ path('updateEtudiantsNiveau2', {'idPromo': p.id }) }}" onclick="return confirm('Etes vous certain de vouloir affecter les étudiants de cette promo en 2ème année ?')"><span title="Cliquer pour affecter les étudiants en 2ème année">SIO1 --> SIO2</span></a>   
+                        {% endif %}
+                         {% if p.statut == 'AC' %}  
+                         <a class="btn btn-primary" href="{{ path('archiverPromo', {'idPromo': p.id }) }}" onclick="return confirm('Etes vous certain de vouloir archiver la promo ?')">Archiver</span></a>                          
+                           
+                        {% endif %}
+                    </div>
+
+                    <div class="collapse" id="collapse{{p.id}}" class="card-body">
+                      <div class="table-responsive">   
+                        <table class="table table-striped table-sm">
+                          <thead>
+                            <tr>
+                              <th><span onclick=TableOrder(event,1)>&#9660;</span><span onclick=TableOrder(event,0)>&#9650;</span>Nom</th>
+                              <th><span onclick=TableOrder(event,1)>&#9660;</span><span onclick=TableOrder(event,0)>&#9650;</span>Prénom</th>
+                              <th>Nombre de rp</th>
+                              <th>Date de naissance</th>
+                              <th><span onclick=TableOrder(event,1)>&#9660;</span><span onclick=TableOrder(event,0)>&#9650;</span>Spécialité</th>                             
+                              <th>password</th>
+                              <th>Supp</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          {% for e in p.etudiants %}
+                            <tr>
+                              <td><a class="text" href="{{ path('showEditEtudiantAdmin', {'idEtudiant': e.id }) }}">{{e.nom}}</a></td>
+                              <td><a class="text" href="{{ path('showEditEtudiantAdmin', {'idEtudiant': e.id }) }}">{{e.prenom}}</a> </td>
+                              <td>{#{e.rps|length}#}</td>
+                              <td>{{e.datenaiss |date("d/m/Y")}}</td>
+                              <td>{{e.specialite.nom}}</td>                                           
+                              <td><a class="text" href="{{ path('initPassword', {'idUser': e.id ,'typeUser':'etudiant'}) }}">réinit</a></td>
+                              <td><a class="text" href="{{ path('removeEtudiant', {'idEtudiant': e.id }) }}"><span title="Cliquer pour supprimer"><img src="{{ asset('images/bin.png' | trans)}}" class="mr-2"  onclick="return confirm('Confirmer la suppression ?')"></span> </a></td> 
+                            </tr>
+                            {% endfor %}
+                         </tbody>
+                        </table>
+                      </div>
+                    </div>
+            {% endfor %}
+</div>
+        </div>
+    </div>      
+{% endblock %}
+   

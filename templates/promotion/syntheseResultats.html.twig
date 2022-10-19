@@ -1,0 +1,67 @@
+{% extends templateTwigParent %}
+
+{% block titreContenu %}Synthèse des résultats des épreuves{% endblock %}
+
+
+{% block contenu%}
+</br>
+<div class="col-lg-10">
+  <div class="card">        
+    <div class="card-body">
+      <div class="table-responsive">   
+          
+          <table class="table table-striped table-sm">
+              <thead>
+                  <tr>
+                      <th>Promo</th>
+                      <th>Adm Sisr</th>
+                      <th>nb Sisr</th> 
+                      <th>Adm Slam</th>             
+                       <th>nb Slam</th> 
+                       <th>Total admis</th> 
+                        <th>Total</th>                      
+                        <th>% Sisr</th> 
+                       <th>% Slam</th>
+                       <th>% </th>      
+                  </tr>
+              </thead>
+              <tbody>
+
+                
+
+                {% for p in promos %}
+                <tr>                                
+
+                    {% set nbEtuSisr = 0 %}
+                    {% set nbEtuSlam = 0 %}  
+                    {% for e in p.etudiants %}
+                        {% if e.specialite.id == 1 %}
+                            {% set nbEtuSisr = nbEtuSisr + 1%}
+                        {% endif %}
+                        {% if e.specialite.id == 2 %}
+                            {% set nbEtuSlam = nbEtuSlam + 1%}
+                        {% endif %}
+                    {% endfor %}
+                    <th>{{p.annee}}</th>
+                    <td>{{p.admisSisr}}</td>
+                    <td>{{nbEtuSisr}}</td>
+                    <td>{{p.admisSlam}}</td>
+                    <td>{{nbEtuSlam}}</td>
+                    <td>{{p.admisSisr + p.admisSlam}}</td>
+                    <td>{{nbEtuSisr + nbEtuSlam}}</td>
+                    <td>{{(p.admisSisr * 100 / nbEtuSisr) | round(2, 'ceil')}}</td>
+                    <td>{{(p.admisSlam * 100 / nbEtuSlam) | round(2, 'ceil')}}</td>
+                    <td>{{((p.admisSisr + p.admisSlam) * 100 / (nbEtuSisr +nbEtuSlam)) | round(2, 'ceil')}}</td>
+                                
+              </tr>
+              {% endfor %}
+              </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+

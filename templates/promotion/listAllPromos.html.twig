@@ -1,0 +1,18 @@
+{% extends "baseEnseignant.html.twig" %}
+{% block titreContenu %}Résultats aux examens {% endblock %}
+
+{% block contenu%}
+
+</br>
+
+<div class="col-lg-12">
+  <div class="card"> 
+    <div class="card-header d-flex align-items-center">
+        {% for p in promos %}
+           <a href="{{ path('listerResultatsParPromo', { 'idPromo': p.id }) }}">{{ p.annee }} </a> |
+         {% endfor %}
+    </div>
+</div> 
+</div> 
+
+{% endblock %}

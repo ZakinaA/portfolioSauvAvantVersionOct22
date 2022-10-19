@@ -1,0 +1,326 @@
+{% extends templateTwigParent %}
+
+{% set totMoyGroupeSisr = 0 %}
+{% set totMoyGroupeSlam = 0 %}
+
+{% block titreContenu %}Résultats des épreuves{% endblock %}
+
+
+{% block contenu%}
+
+{% for message in app.flashes('success') %}{# affichera un message de succès si l'action est réussie #}
+            <div class="alert alert-success m-2">
+                {{ message }}
+            </div>
+{% endfor %}
+
+</br>
+<div class="col-lg-12">
+  <div class="card"> 
+    <div class="card-header d-flex align-items-center">  
+        {% for p in promos %}      
+            <a class="btn btn-primary"  href="{{ path('listerResultatsParPromo', { 'idPromo': p.id, 'idEtudiant': 0 }) }}" role="button" aria-expanded="false">{{p.annee}}</a> &nbsp;
+        {% endfor %}       
+    </div>
+</div> 
+</div> 
+
+{% if etudiant is defined and form is defined %}
+<!-- MODAL DE SAISIE DES NOTES -->
+{{ form_start(form)}}
+  <div class="modal fade" id="modalNotes" tabindex="-1" role="dialog" aria-labelledby="modalNotes" aria-hidden="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">SAISIE DES NOTES DE {{etudiant.prenom}} {{etudiant.nom}} </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+         {% for noteEpreuve in form.noteEpreuves %}
+              <div class="form-group row">
+                  <div class="ml-3 col-sm-20">
+                      <div class="row">                                               
+                            <div class="col-md-8">
+                                {{ form_row(noteEpreuve.epreuve , {'attr' : {'class' : 'form-control form-control-sm'}}) }} 
+                            </div>
+                            <div class="col-md-2">
+                                {{ form_row(noteEpreuve.note , {'attr' : {'class' : 'form-control form-control-sm'}}) }}
+                            </div>
+                      </div>
+                  </div>
+              </div>
+          {% endfor %}                       
+        </div>
+        <div class="modal-footer">
+            <button data-dismiss="modal" class="btn btn-secondary">Annuler</button>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{ form_end(form) }}
+  
+  <a id="buttonModal" href scope="row" data-toggle="modal" data-target="#modalNotes" style="display : none"></a>
+  <script type="text/javascript">
+      window.addEventListener("load", function(){
+      document.getElementById("buttonModal").click();
+      });
+  </script>
+
+<!-- FIN MODAL DE SAISIE DES NOTES -->
+{% endif %}
+
+
+{% if sisr is defined and slam is defined%}
+
+<!-- TABLEAU DES SISR -->
+<div class="col-lg-12">
+  <div class="card"> 
+    <div class="card-header d-flex align-items-center">
+        <h3 class="h4">Etudiants spécialité SISR</h3>
+    </div>       
+  <div class="card-body">
+      <div class="table-responsive">   
+          <table class="table table-striped table-sm">
+              <thead>
+                  <tr>
+                      <th>Nom</th>
+                      <th>Prénom</th>                     
+                      {% for e in epreuves  %}    
+                        <th>{{e.libelleCourt}} </th>
+                      {% endfor %}
+                      <th>NbPoints</th>
+                      <th>Moy</th>
+                      <th>Admis</th>
+                  </tr>
+              </thead>
+              <tbody>
+                     
+              {% set notea= '' %}
+              {% set nbAdmisSisr = 0 %}
+              {% set nbSisr = 0 %}
+              {% set nbPointsTotalSisr = 0 %}
+  
+              {# boucle etudiant sisr #}
+              {% for er in sisr  %}    
+
+              <tr>
+                  {% set nbSisr = nbSisr + 1 %}
+                  {% if is_granted('ROLE_ADMIN') %} {#  on ajoute le lien pour permettre la saisie des étudiants #}
+                    <td><a href="{{ path('listerResultatsParPromo', { 'idPromo': promo, 'idEtudiant': er.id }) }}">{{er.nom}}</a></td>
+                    <td><a href="{{ path('listerResultatsParPromo', { 'idPromo': promo, 'idEtudiant': er.id }) }}">{{er.prenom}}</a></td>
+                    
+                  {% else %}
+                      {% if is_granted('ROLE_ADMIN') %}
+                    <td><a id="buttonModal" href scope="row" data-toggle="modal" data-target="#modalNotes" style="display : none">{{er.nom}}</a></td>
+                      {% else %}
+                      <td>{{er.nom}}</td>
+                      {% endif %}
+                    <td>{{er.prenom}}</td>
+					 
+                  {% endif %}
+
+                  {% set nbPoints = 0 %}               
+                  {% set codeEpreuve = 0 %}
+                  {% for e in epreuves  %}
+                      {% set codeEpreuve = e.id %}                     
+                      {% for noteEpr in er.noteEpreuves %}
+                          {% if noteEpr.epreuve.id == e.id %}
+                              {% set notea = noteEpr.note %}
+
+                                  {% if e.isoption == 1 %}  
+                                    {% if notea >10 %}                    
+                                      {% set nbPoints = nbPoints + (notea -10)  %}
+                                    {% endif %}                           
+                                  {% else %}                                 
+                                    {% set nbPoints = nbPoints + notea * (noteEpr.epreuve.coef) %} 
+                                   {% endif %}   
+                        
+                          {% endif %}
+                                
+                      {% endfor %}                      
+                      <td align="right">{{notea}}</td>
+                  {% endfor %}
+               
+                  <td align="right">{{nbPoints}}</td>
+                   {% set nbPointsTotalSisr = nbPointsTotalSisr + nbPoints %}
+                   {% set moyEtudiantSisr = (nbPoints * 20/440 )|round(2, 'ceil') %}
+                   {% set totMoyGroupeSisr = totMoyGroupeSisr + moyEtudiantSisr %}
+                  <td align="right">{{ moyEtudiantSisr }}</td>
+
+                  {% if nbPoints >= 220 %}
+                    <td>Admis</td>
+                    {% set nbAdmisSisr = nbAdmisSisr + 1 %}
+                  {% else %}
+                    <td>Non admis</td>
+                  {% endif %}
+              </tr>
+              
+              {% endfor %} {# fin boucle etudiants sisr#}
+              
+              {# dernière ligne tableau sisr avec affichage des moyennes  #}
+              <tr>
+              <th>Moyennes</th><th></th>
+
+              
+              {% for moy in moySisr %}
+                  
+                  <th align="right">
+                    {{ moy.note |round(2, 'ceil')}}
+                  </th>
+                {% endfor %}
+                <th align="right">{{(nbPointsTotalSisr / nbSisr) |round(2, 'ceil')}}</th>
+                <th align="right">{{ (totMoyGroupeSisr / nbSisr)|round(2, 'ceil')}}</th>               
+                <th align="right">{{(nbAdmisSisr * 100 / nbSisr)|round(2, 'ceil')}} %</th>
+              </tr>
+              </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- TABLEAU DES SLAM -->
+<div class="col-lg-12">
+  <div class="card"> 
+    <div class="card-header d-flex align-items-center">
+        <h3 class="h4">Etudiants spécialité SLAM</h3>
+    </div>       
+  <div class="card-body">
+      <div class="table-responsive">   
+          <table class="table table-striped table-sm">
+              <thead>
+                  <tr>
+                      <th>Nom</th>
+                      <th>Prénom</th>                        
+                      {% for e in epreuves  %}    
+                        <th>{{e.libelleCourt}}</th>
+                      {% endfor %}
+                      <th>Nb Points</th>
+                      <th>Moy</th>
+                      <th>Admis</th>
+                  </tr>
+              </thead>
+              <tbody>
+
+              {% set nbAdmisSlam = 0 %}
+              {% set nbSlam = 0 %}
+              {% set nbPointsTotalSlam = 0 %}
+              {% for er in slam  %}    
+              <tr>
+                 {% set nbSlam = nbSlam + 1 %}
+                 {% if is_granted('ROLE_ADMIN') %} {#  on ajoute le lien pour permettre la saisie des étudiants #}
+                    <td><a href="{{ path('listerResultatsParPromo', { 'idPromo': promo, 'idEtudiant': er.id }) }}">{{er.nom}}</a></td>
+                    <td><a href="{{ path('listerResultatsParPromo', { 'idPromo': promo, 'idEtudiant': er.id }) }}">{{er.prenom}}</a></td>
+                  {% else %}
+                    <td>{{er.nom}}</td>
+                    <td>{{er.prenom}}</td>
+                  {% endif %}
+                  {% set nbPoints = 0 %}
+                  {% for e in epreuves  %}
+                      {% set notea= '' %}  
+                      {% for noteEpr in er.noteEpreuves %}
+                           {% if noteEpr.epreuve.id == e.id %}
+                              {% set notea = noteEpr.note %}
+
+                                  {% if e.isoption == 1 %}  
+                                    {% if notea >10 %}                    
+                                      {% set nbPoints = nbPoints + (notea -10)  %}
+                                    {% endif %}                           
+                                  {% else %}                                 
+                                    {% set nbPoints = nbPoints + notea * (noteEpr.epreuve.coef) %} 
+                                   {% endif %}   
+                        
+                          {% endif %}       
+                      {% endfor %}
+                      <td align="right">{{notea}}</td>
+                  {% endfor %}
+                  <td align="right">{{nbPoints}}</td>
+                   {% set nbPointsTotalSlam = nbPointsTotalSlam + nbPoints %}
+                  {% set moyEtudiantSlam = (nbPoints * 20/440 )|round(2, 'ceil') %}
+                   {% set totMoyGroupeSlam = totMoyGroupeSlam + moyEtudiantSlam %}
+                  <td align="right">{{ moyEtudiantSlam|round(2, 'ceil')}}</td>
+                  {% if nbPoints >= 220 %}
+                   {% set nbAdmisSlam = nbAdmisSlam + 1 %}
+                    <td>Admis</td>
+                  {% else %}
+                    <td>Non admis</td>
+                  {% endif %}
+              </tr>
+              {% endfor %}
+
+              {# dernière ligne tableau sisr avec affichage des moyennes  #}
+              <tr>
+              <th>Moyennes</th><th></th>
+              
+              {% for moy in moySlam %}
+                  <th align="right">
+                    {{ moy.note |round(2, 'ceil')}}
+                  </th>
+                {% endfor %}
+                <th align="right">{{(nbPointsTotalSlam / nbSlam)|round(2, 'ceil')}}</th>
+                <th align="right">{{ (totMoyGroupeSlam / nbSlam)|round(2, 'ceil')}}  </th>               
+                <th align="right">{{(nbAdmisSlam * 100 / nbSlam)|round(2, 'ceil')}} %</th>
+              </tr>
+
+              </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- TABLEAU DES MOYENNES  -->
+<div class="col-lg-12">
+  <div class="card"> 
+    <div class="card-header d-flex align-items-center">
+        <h3 class="h4">Résultats promo</h3>
+    </div>       
+  <div class="card-body">
+      <div class="table-responsive">   
+          <table class="table table-striped table-sm">
+              <thead>
+                  <tr>
+                      <th></th>
+                      <th></th>                     
+                      {% for e in epreuves  %}    
+                        <th>{{e.libelleCourt}} </th>
+                      {% endfor %}
+                      <th align="right">Nb Points</th>
+                      <th align="right">Moy</th>
+                      <th>Admis</th>
+                  </tr>
+              </thead>
+              <tbody>    
+              
+              {#  ligne tableau  avec affichage des moyennes  #}
+              <tr>
+              <th>Moyennes</th><th></th>
+              
+              {% for moy in moyPromo %}          
+                  <th align="right">
+                    {{ moy.note|round(2, 'ceil') }}
+                  </th>
+                {% endfor %}
+                <th align="right">{{((nbPointsTotalSisr +  nbPointsTotalSlam )/ (nbSisr + nbSlam)) |round(2, 'ceil')}}</th>
+                <th align="right">{{ ((totMoyGroupeSisr + totMoyGroupeSlam) / (nbSlam+nbSisr))|round(2, 'ceil')}}</th>               
+                <th align="right">{{((nbAdmisSisr + nbAdmisSlam) * 100 / ( nbSisr + nbSlam)) |round(2, 'ceil') }} %</th>
+              </tr>
+              </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endif %}
+{% endblock %}
+

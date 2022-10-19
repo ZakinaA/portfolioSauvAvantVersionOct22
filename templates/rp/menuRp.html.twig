@@ -1,0 +1,28 @@
+ 
+<!-- Menu des rp qui diffère en fonction de l'user, si c'est un étudiant ou un enseignant -->
+ 
+<div class="card-header d-flex align-items-center">    
+            {% if is_granted('ROLE_ENSEIGNANT') %}
+             <div class="breadcrumb-holder container-fluid">
+                 <ul class="breadcrumb">
+                    <li class="breadcrumb-item active"><a href="{{ path('rpShow', { 'idRp': rp.id  }) }}">Description</a></li>
+                    <li class="breadcrumb-item" active><a href="{{ path('rpActiviteList', { 'idRp': rp.id }) }}">Tâches</a></li>
+                    <li class="breadcrumb-item active"><a  href="{{ path('rpProductionList', { 'idRp': rp.id }) }}">Productions</a></li> 
+                    <li class="breadcrumb-item active"><a href="{{ path('commentaireRpAdd', { 'idRp': rp.id  }) }}">Commentaires</a></li> 
+                    <li class="breadcrumb-item active"><a   href="{{ path('rpValider', { 'idRp': rp.id  }) }}"  >Viser</a></li>        
+                </ul> 
+            </div>
+
+            {% else %}
+
+            <div class="breadcrumb-holder container-fluid">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item active"><a href="{{ path('rpShowEditAdd', { 'idRp': rp.id }) }}">Description</a></li>
+                    <li class="breadcrumb-item"><a href="{{ path('rpActiviteList', { 'idRp': rp.id}) }}">Tâches</a></li>
+                    <li class="breadcrumb-item active"><a  href="{{ path('rpProductionList', { 'idRp': rp.id }) }}">Productions</a></li>                                
+                    <li class="breadcrumb-item active"><a href="{{ path('rpCommentaireNotifierEnseignant', { 'idRp': rp.id }) }}">Commentaires</a></li>
+                </ul> 
+                </div>
+                  <button class="btn btn-primary" type="submit" onclick="window.location.href='{{ path('rpActiviteAdd', { 'idRp': rp.id  })  }}'">Nouvelle tâche</button>           
+            {% endif %}
+</div>

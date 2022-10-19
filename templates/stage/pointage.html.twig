@@ -1,0 +1,117 @@
+
+{#% extends "etudiant/baseEtudiant.html.twig" %#}
+{% extends templateTwigParent %}
+
+{% block titreContenu %}  
+    {% if is_granted('ROLE_ENSEIGNANT') %}
+        <a href="{{ path('stagesSuivisList') }}">Stages / </a> {{stage.etudiant.prenom}} {{stage.etudiant.nom}} chez {{stage.nomEntreprise}}
+    {% else %}
+        Mon stage
+    {% endif %}
+{% endblock %}
+
+{% block contenu%}
+
+</br>
+{% for message in app.flashes('success') %}{# affichera un message de succès si l'action est réussie #}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+{% endfor %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+
+                <!-- Menu stage avec les semaines -->  
+                <div class="card-header d-flex align-items-center">                                          
+                        <div class="breadcrumb-holder container-fluid">
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item active">
+                                   
+                                   <!-  lien infos du stage en fonction du rôle etudiant ou enseignant -->
+                                    {% if is_granted('ROLE_ENSEIGNANT') %}
+                                        <a href="{{ path('stageShow', {'idStage': stage.id }) }}">
+                                    {% else %}
+                                        {% if is_granted('ROLE_ETUDIANT') %} 
+                                            <a href="{{ path('stageAddEdit', {'idStage': stage.id }) }}">
+                                        {% endif %}
+                                    {% endif %}
+                                    Infos</a>
+                                </li>
+
+                                {% if stage.id > 0 %}  <!-- on est sur un stage existant  - si nouveau stage, on n'affiche pas ces liens -->        
+                                    {% if stage.duree > 0 %}          
+                                        {% set nbSem = stage.duree %}
+                                        {% for i in 1..nbSem %}
+                                            <li class="breadcrumb-item">
+                                                {% if is_granted('ROLE_ENSEIGNANT') %}
+                                                    <a href="{{ path('showSemaineStage', {'idStage': stage.id, 'numSemaine': i})}}"> 
+                                                {% else %}
+                                                    {% if is_granted('ROLE_ETUDIANT') %} 
+                                                        <a href="{{path('semaineStageShowAdd', {'idStage': stage.id, 'numSemaine': i})}}"> 
+                                                    {% endif %}
+                                                {% endif %}
+                                                Semaine {{ i }}</a>     
+                                            </li>                         
+                                        {% endfor %}
+
+                                        <!-- lien attestation -->
+                                        {% if is_granted('ROLE_ENSEIGNANT') %} 
+                                        {% elseif is_granted('ROLE_ETUDIANT') %}                                       
+                                            <li class="breadcrumb-item"><a href="{{ path('stageAttestationPdf', { 'idStage': stage.id} ) }}"> Attestation </a></li>                                                                                            
+                                        {% endif %}
+
+                                        <!-- lien Pointage -->
+                                        <li class="breadcrumb-item"><a href="{{ path('pointageStage', { 'idStage': stage.id} ) }}"> Pointage </a></li>                                                                                            
+
+                                    {% endif %}                                     
+                                {% endif %}                           
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Fin menu navigation stage -->
+
+                    <div class="card-body">  
+                        <div class="table-responsive"> 
+
+                            <!-- Bouton pointer pour l'étudiant seulement -->
+                            {% if is_granted('ROLE_ENSEIGNANT') %} 
+                            {% elseif is_granted('ROLE_ETUDIANT') %}                                       
+                                <div class="form-group">                         
+                                <form action="{{ path('pointageStage', { 'idStage': stage.id, 'action':99} ) }}"><input type="submit" value="Pointer" onClick="{{ path('pointageStage', { 'idStage': stage.id, 'action':99} ) }}" class="btn btn-primary"></form>                     
+                            </div>
+                            {% endif %}
+
+                        <table class="table table-striped table-sm">
+                          <thead>
+                            <tr>
+                              <th>Date</th>
+                              <th>Heure</th>
+                              <th>Ip</th>
+                            
+                              <th>Supprimer</th>                                                     
+                            </tr>
+                          </thead>
+                          <tbody>
+                    
+                           {% for pointage in stage.pointages  %}        
+                              <tr>
+                                <td scope="row">{{pointage.datePoint |date('D m/Y')}} </a></td>
+                                <td>{{pointage.heurePoint |date('h:i:s')}}  </td>
+                                <td>{{pointage.ipPoint}}</td>
+                                 <td><a class="text" href="{{ path('pointageRemove', { 'idPointage': pointage.id }) }}"><span title="Cliquer pour supprimer"><img src="{{ asset('images/bin.png' | trans)}}" class="mr-2"  onclick="return confirm('Confirmer la suppression ?')"></span> </a></td>  
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        </table>
+
+                   </div>
+                </div>
+            </div>
+        </div>
+   
+<!--/section-->
+
+{% endblock %}

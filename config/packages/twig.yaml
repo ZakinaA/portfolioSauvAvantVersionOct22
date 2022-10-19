@@ -1,0 +1,19 @@
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    form_themes: ['bootstrap_4_layout.html.twig']
+
+    paths:
+        # directories are relative to the project root dir (but you
+        # can also use absolute directories)
+        'templates': ~
+        'templates/etudiant': ~
+        'templates/enseignant': ~
+        'templates/admin': ~
+
+    globals:
+        titreNavigateur : Portfolio SIO
+        titrePublic1: Portfolio SIO
+        titrePublic2: Lycée Jean Rostand
+        sousTitrePublic: Pour gérer vos compétences, vos activités, vos stages
+        titreHeader1 : SIO
+        titreHeader2 : Portfolio

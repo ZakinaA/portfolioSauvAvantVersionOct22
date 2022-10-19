@@ -1,0 +1,355 @@
+index:
+    path: /
+    controller: App\Controller\SecurityController::index
+
+#############################################################################
+################ Routes accès public ########################################
+#############################################################################
+accueil_global:
+    path: /
+    controller: App\Controller\SecurityController::login
+
+inscription:
+    path: /inscription
+    controller: App\Controller\RegisterController::addUserEtudiant
+
+confirmMail:
+    path: /confirmMail/{token}
+    controller: App\Controller\RegisterController::confirmMail
+
+app_login:
+    path: /login
+    controller: App\Controller\SecurityController::login
+
+app_logout:
+    path: /logout
+    controller: App\Controller\SecurityController::logout
+
+login_success:
+    path: /login_success
+    controller: App\Controller\SecurityController::home
+
+competencesShow:
+    path: /competences/show
+    controller: App\Controller\RpActiviteController::showCompetences
+
+syntheseResultats:
+    path: /resultats/show
+    controller: App\Controller\PromotionController::showResultats
+#############################################################################
+################ Routes etudiant ############################################
+#############################################################################
+
+# Consultation /Edition d'un étudiant
+#showEditEtudiant:
+etudiantShowEdit:
+  path: /etudiant/showEdit
+  controller: App\Controller\EtudiantController::showEdit
+
+# Page accueil étudiant : renvoie la liste des 7 dernières rp et des stages
+etudiantHome:
+  path: /etudiant/home
+  controller: App\Controller\EtudiantController::home
+
+######## Routes des fonctionalités rp pour un étudiant connecté ########################
+
+#Liste les rps non archivées d'un étudiant connecté
+etudiantRps:
+  path: /etudiant/rps
+  controller: App\Controller\EtudiantController::getLesRP
+
+#Liste les rp archivées d'un étudiant connecté
+etudiantRpsArchivees:
+  path: /etudiant/rpsArchivees
+  controller: App\Controller\EtudiantController::getLesRPArchivees
+
+#Permet de consulter et d'éditer, d'ajouter une rp
+rpShowEditAdd:
+  path: /rp/showEditAdd/{idRp<\d+>?0}
+  controller: App\Controller\RpController::showEditAdd
+
+#Permet de consulter et d'éditer, d'ajouter une rp
+rpShowEditAdd2:
+  path: /rp/showEditAdd2/{idRp<\d+>?0}
+  controller: App\Controller\RpController::showEditAdd2
+
+#Permet d'archiver une rp
+rpArchiver:
+  path: /rp/archiver/{idRp<\d+>?0}
+  controller: App\Controller\RpController::archiver
+
+#Permet de désarchiver une rp
+rpDesarchiver:
+  path: /rp/desarchiver/{idRp<\d+>?0}
+  controller: App\Controller\RpController::desarchiver
+
+#Permet de supprimer une rp
+rpRemove:
+  path: /rp/remove/{idRp<\d+>?0}
+  controller: App\Controller\RpController::remove
+
+#Liste les activités d'une rp passée en paramètre
+rpActiviteList:
+  path: /rp/activite/list/{idRp<\d+>?0}
+  controller: App\Controller\RpActiviteController::rpActiviteList
+
+#Edite une activité dont l'id est passé en paramètre
+rpActiviteEdit:
+  path: /rp/activite/edit/{idRpActivite<\d+>?0}
+  controller: App\Controller\RpActiviteController::rpActiviteEdit
+
+#Permet d'ajouter une activité dont l'id rp est passé en paramètre
+rpActiviteAdd:
+  path: /rp/activite/add/{idRp<\d+>?0}
+  controller: App\Controller\RpActiviteController::rpActiviteAdd
+
+#Permet de supprimer une activité dont l'id est passée en paramètre
+rpActiviteRemove:
+  path: /rp/activite/remove/{idRpActivite<\d+>?0}
+  controller: App\Controller\RpActiviteController::rpActiviteRemove
+
+#Liste les productions d'une rp passée en paramètre
+rpProductionList:
+  path: /rp/production/list/{idRp<\d+>?0}
+  controller: App\Controller\RpProductionController::rpProductionList
+
+#Permet d'ajouter une production à une rp
+rpProductionAdd:
+  path: /rp/production/add/{idRp<\d+>?0}
+  controller: App\Controller\RpProductionController::rpProductionAdd
+
+#Permet d'éditer la production d'une rp
+rpProductionEdit:
+  path: /rp/production/edit/{idProduction<\d+>?0}
+  controller: App\Controller\RpProductionController::rpProductionEdit
+
+#Permet de supprimer une production dont l'id est passée en paramètre
+rpProductionRemove:
+  path: /rp/production/remove/{idProduction<\d+>?0}
+  controller: App\Controller\RpProductionController::rpProductionRemove
+
+
+#Liste les commentaires d'une rp passée en paramètre
+rpCommentaireList:
+  path: /rp/commentaire/list/{idRp<\d+>?0}
+  controller: App\Controller\RpCommentaireController::rpCommentaireList
+
+#Permet à l'étudiant de soumettre sa rp à un enseignant
+rpCommentaireNotifierEnseignant:
+  path: /rp/commentaire/notifierEnseignant/{idRp<\d+>?0}
+  controller: App\Controller\RpCommentaireController::rpNotifier
+
+
+######## Routes des fonctionnalités stage pour un étudiant connecté ####################
+
+#Liste les stages  d'un étudiant connecté
+etudiantStages:
+  path: /etudiant/stages
+  controller: App\Controller\StageController::getLesStagesByEtudiant
+  
+#Permet à un étudiant connecté d'ajouter ou de modifier un stage
+stageAddEdit:
+  path: etudiant/stage/addEdit/{idStage<\d+>?0}
+  controller: App\Controller\StageController::addEdit
+
+#Permet à un étudiant connecté de supprimer un de ses stage
+stageRemove:
+  path: etudiant/stage/remove/{idStage<\d+>?0}
+  controller: App\Controller\StageController::remove
+
+#Permet à un étudiant connecté de renseigner sa semaine de stage en ajoutant des taches
+#showEditSemaineStage:
+semaineStageShowAdd:
+    path: etudiant/stage/showAddSemaineStage/{idStage<\d+>?0}/{numSemaine<\d+>?0}
+    controller: App\Controller\StageController::showAddSemaineStage
+
+#suppression d'une tache
+tacheRemove:
+  path: /etudiant/stage/removeTache/{idTache}
+  controller: App\Controller\TacheSemaineController::removeTache
+
+#modification d'une tache
+tacheEdit:
+  path: /etudiant/stage/editTache/{idTache}
+  controller: App\Controller\TacheSemaineController::editTache
+
+# Génération attestation de stage
+stageAttestationPdf:
+  path: /etudiant/stage/createAttestation/{idStage}
+  controller: App\Controller\StageController::createAttestation
+
+#consulter les pointages d'un stage
+pointageStage:
+    path: /etudiant/stage/pointage/{idStage}/{action<\d+>?0}
+    controller: App\Controller\PointageController::pointer
+
+#consulter les pointages d'un stage
+pointageRemove:
+    path: /etudiant/stage/removePointage/{idPointage}
+    controller: App\Controller\PointageController::pointageRemove
+
+#Création du tableau de synthèse des rp devant couvrir tout B1 
+tableauE4:
+    path: /etudiant/rp/createTableauE4
+    controller: App\Controller\RpController::tableauE4Create
+
+
+##################################################################################
+###### Routes enseignant ############
+###################################################################################
+enseignantHome:
+  path: /enseignant/home
+  controller: App\Controller\EnseignantController::home
+
+# Permet de consulter une rp pour l'enseignant
+rpShow:
+  path: /enseignant/rp/show/{idRp}
+  controller: App\Controller\RpController::show
+
+# liste les promotions en cours
+promoList:
+  path: /enseignant/promo/list/
+  controller: App\Controller\PromotionController::list
+
+# liste les rp d'une promo en cours (slam1, sisr2)
+# La variable $source permet de savoir sur quel lien on a cliqué déclencher cette fonction
+# si $source=menu, on vient du menu de gauche et on affiche la liste de toutes les rp des etudiants de la spé et du niveau
+# $source=tb, on affiche le tableau de bord (home enseignant) et on affiche les étudiant avec la liste des etudiants, le nb de rp, le nb de stage
+rpsEtudiantsParSpecialiteEtNiveau:
+  path: /enseignant/promo/etudiants/list/{idSpecialite}/{idNiveau}/{source}
+  controller: App\Controller\EnseignantController::listRpsEtudiantsParSpecialiteEtNiveau
+ 
+# Permet à l'enseignant d'ajouter un commentaire
+# On met le champ enseignant de la rp à null
+# On change le statut de la rp pour le mettre à commentée
+#addCommentaireRp:
+commentaireRpAdd:
+  path: /enseignant/rp/commentaire/add/{idRp<\d+>?0}
+  controller: App\Controller\RpCommentaireController::addCommentaire
+
+# Liste les rp d'un étudiant
+rpsParEtudiant:
+  path: /enseignant/etudiant/rp/list/{idEtudiant}
+  controller: App\Controller\RpController::listParEtudiant
+
+
+# Permet de valider une rp
+rpValider:
+  path: /enseignant/rp/valider/{idRp<\d+>?0}
+  controller: App\Controller\RpController::valider
+
+#showEditEnseignant:
+enseignantShowEdit:
+  path: /enseignant/showEdit
+  controller: App\Controller\EnseignantController::showEdit
+
+# Liste toutes les RP  archivées classées par date desc
+allRpsArchivees:
+  path: /enseignant/listAllRpsArchivees
+  controller: App\Controller\EnseignantController::listAllRpsArchivees
+
+#Liste des stages des étudiants dont l'enseignant assure le suivi
+#listeStagesSuivis:
+stagesSuivisList:
+  path: /enseignant/stagesSuivis
+  controller: App\Controller\StageController::getLesStagesSuivis
+
+#consultation d'un stage dont l'enseignant assure le suivi
+stageShow:
+  path: /enseignant/stage/show/{idStage}
+  controller: App\Controller\StageController::showStage
+
+#consultation de l'activité d'une semaine de stage d'un enseignant
+showSemaineStage:
+  path: /enseignant/stage/semaine/show/{idStage}/{numSemaine}
+  controller: App\Controller\StageController::showSemaine
+
+# Liste les stages d'un étudiant (depuis le tableau de bord)
+#listStagesByEtudiant:
+stagesParEtudiant:
+  path: /enseignant/stage/listStagesByEtudiant/{idEtudiant}
+  controller: App\Controller\StageController::listStagesByEtudiant
+
+#liste les stages de 1ère et 2ème année pour les affecter à un enseignant
+listerStagesAAffecter:
+  path: /enseignant/listerStagesAAffecter/{idNiveau}
+  controller: App\Controller\StageController::listerStagesAAffecter
+
+#liste les résultats des épreuves des étudiants d'une promo
+listerResultatsParPromo:
+  path: /enseignant/listerResultatsParPromo/{idPromo<\d+>?0}/{idEtudiant<\d+>?0}
+  controller: App\Controller\NoteEpreuveController::listerResultatsParPromo
+
+
+#############################################################################
+################ Routes admin ############################################
+#############################################################################
+adminHome:
+  path: /admin/home
+  controller: App\Controller\AdminController::home
+
+adduserEnseignant:
+  path: /admin/addUserEnseignant
+  controller: App\Controller\AdminController::addUserEnseignant
+
+listEnseignants:
+  path: /admin/listEnseignants
+  controller: App\Controller\AdminController::listEnseignants
+
+showEditEnseignantAdmin:
+  path: /admin/showEditEnseignant/{idUser}
+  controller: App\Controller\AdminController::showEditEnseignant
+
+listPromoEtudiants:
+  path: /admin/listPromoEtudiants
+  controller: App\Controller\AdminController::listPromoEtudiants
+
+showEditEtudiantAdmin:
+  path: /admin/showEditEtudiant/{idEtudiant}
+  controller: App\Controller\AdminController::showEditEtudiant
+
+#Permet de lister les comptes des étudiants qui n'ont pas encore été activés
+listerComptesNonActifs:
+  path: /admin/listerComptesNonActifs
+  controller: App\Controller\AdminController::listerComptesNonActifs
+
+#Permet de valider un compte étudiant (passer le statut user de AR à AC)
+validerCompte:
+  path: /admin/validerCompte/{email}
+  controller: App\Controller\AdminController::validerCompte
+
+#Permet de supprimer un compte étudiant
+supprimerCompte:
+  path: /admin/supprimerCompte/{email}
+  controller: App\Controller\AdminController::supprimerCompte
+
+#Permet de supprimer un étudiant
+removeEtudiant:
+  path: /admin/removeEtudiant/{idEtudiant}
+  controller: App\Controller\EtudiantController::removeEtudiant
+
+#Permet de saisie les notes d'un étudiant aux épreuves
+saisirNotes:
+  path: /admin/saisirNotes/{idEtudiant}
+  controller: App\Controller\NoteEpreuveController::addNotes
+
+#Permet de basculer tous les étudiants d'une promo de 1ère année en 2ème année:
+updateEtudiantsNiveau2:
+  path: /admin/updateEtudiantsNiveau2/{idPromo}
+  controller: App\Controller\AdminController::updateEtudiantsNiveau2
+
+#Permet d'archiver une promotion
+archiverPromo:
+  path: /admin/archiverPromo/{idPromo}
+  controller: App\Controller\AdminController::archiverPromo
+
+#Permet de réinitialiser un mot de passe
+# typeUser accepte 2 valeurs : etudiant ou enseignant
+initPassword:
+  path: /admin/initPassword/{idUser}/{typeUser}
+  controller: App\Controller\SecurityController::initPassword
+
+#Permet de resaisir un mot de passe
+changePassword:
+  path: /changePassword
+  controller: App\Controller\SecurityController::changePassword
