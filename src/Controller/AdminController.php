@@ -52,7 +52,7 @@ class AdminController extends AbstractController
         {
 
             $userEnseignant = $form->getData();
-            $userEnseignant->setPassword('mpProfSIO');
+            $userEnseignant->setPassword('mpProfSIOSIO');
             $userEnseignant->setStatut('MP');
             $roles[] = 'ROLE_ENSEIGNANT';
             $userEnseignant ->setRoles($roles);
